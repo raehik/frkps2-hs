@@ -1,0 +1,46 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.35.2.
+--
+-- see: https://github.com/sol/hpack
+
+name:           frkps2-hs
+version:        0.1.0
+description:    Please see README.md.
+homepage:       https://github.com/raehik/frkps2-hs#readme
+bug-reports:    https://github.com/raehik/frkps2-hs/issues
+author:         Ben Orchard
+maintainer:     Ben Orchard <thefirstmuffinman@gmail.com>
+build-type:     Simple
+extra-source-files:
+    README.md
+
+source-repository head
+  type: git
+  location: https://github.com/raehik/frkps2-hs
+
+library
+  exposed-modules:
+      MT19937.Impure
+      MT19937.Internal
+      MT19937.Pure
+  other-modules:
+      Paths_frkps2_hs
+  hs-source-dirs:
+      src
+  default-extensions:
+      LambdaCase
+      NoStarIsType
+      DerivingVia
+      DeriveAnyClass
+      GADTs
+      RoleAnnotations
+      DefaultSignatures
+      TypeFamilies
+      DataKinds
+      MagicHash
+  ghc-options: -Wall
+  build-depends:
+      array >=0.5.6.0 && <0.6
+    , base >=4.18.0.0 && <4.19
+  default-language: GHC2021
