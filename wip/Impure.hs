@@ -11,6 +11,8 @@ One could write a pure interface. It'd be a pain though.
 
 module MT19937.Impure where
 
+    {-
+
 import MT19937.Internal ( temper )
 
 import Data.Bits
@@ -83,3 +85,5 @@ initState seed = do
         let mti = f * (prev `xor` (prev `shiftR` (w-2))) + i
         unsafeWrite mt' (fromIntegral i) mti
         go mt' (i+1)
+
+-}

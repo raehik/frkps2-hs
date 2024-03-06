@@ -21,7 +21,6 @@ source-repository head
 
 library
   exposed-modules:
-      MT19937.Impure
       MT19937.Internal
       MT19937.Pure
   other-modules:
@@ -41,6 +40,6 @@ library
       MagicHash
   ghc-options: -Wall
   build-depends:
-      array >=0.5.6.0 && <0.6
-    , base >=4.18.0.0 && <4.19
+      base >=4.18.0.0 && <4.19
+    , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
