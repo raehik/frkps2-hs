@@ -3,11 +3,11 @@
 Note that seeding with 0 may result in poor randomness.
 -}
 
-module MT19937.Pure
-  ( MT19937(idx, mt), MT19937.Pure.init, init', extract
+module Raehik.MT19937.Pure
+  ( MT19937(idx, mt), Raehik.MT19937.Pure.init, init', extract
   ) where
 
-import MT19937.Internal ( temper, twist )
+import Raehik.MT19937.Internal ( temper, twist )
 
 import Data.Word ( Word32 )
 import Data.Bits

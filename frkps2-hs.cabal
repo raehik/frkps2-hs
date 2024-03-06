@@ -21,8 +21,8 @@ source-repository head
 
 library
   exposed-modules:
-      MT19937.Internal
-      MT19937.Pure
+      Raehik.MT19937.Internal
+      Raehik.MT19937.Pure
   other-modules:
       Paths_frkps2_hs
   hs-source-dirs:

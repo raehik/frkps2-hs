@@ -1,6 +1,6 @@
 -- | Shared/general-ish MT19937 internals.
 
-module MT19937.Internal where
+module Raehik.MT19937.Internal where
 
 import Data.Bits
 import Data.Word ( Word32 )
