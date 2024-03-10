@@ -42,8 +42,7 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.18.0.0 && <4.19
-    , bytestring >=0.12.1.0 && <0.13
+    , bytestring >=0.11.5.3 && <0.13.0.0
     , bytezap
-    , text >=2.1.1 && <2.2
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
