@@ -4,7 +4,7 @@ Note that seeding with 0 may result in poor randomness.
 -}
 
 module Raehik.MT19937.Pure
-  ( MT19937(idx, mt), Raehik.MT19937.Pure.init, init', extract
+  ( MT19937(idx, mt), Raehik.MT19937.Pure.init, init', extract, skip
   ) where
 
 import Raehik.MT19937.Internal ( temper, twist )
@@ -14,6 +14,8 @@ import Data.Bits
 
 import Data.Vector.Unboxed qualified as VU
 import Data.Vector.Unboxed.Mutable qualified as VUM
+
+import Control.Monad ( replicateM_ )
 
 -- | MT19937 state, holding the state vector and the current index.
 data MT19937 = MT19937
@@ -66,3 +68,15 @@ extract (MT19937 idx mt) = do
     else
         let w   = temper (mt VU.! idx)
         in  (w, MT19937 (idx+1) mt)
+
+-- | Skip the given number of random bytes.
+--
+-- If the skips would result in multiple twists, we perform these in a single
+-- pass (rather than copying the array every twist).
+skip :: MT19937 -> Int -> MT19937
+skip (MT19937 idx mt) n =
+    let (idx', twists) = idx `quotRem` 624
+    in  if   twists > 0
+        then let mt' = VU.modify (replicateM_ twists . twist) mt
+             in  MT19937 idx' mt'
+        else MT19937 idx' mt
