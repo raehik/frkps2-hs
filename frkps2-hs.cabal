@@ -21,6 +21,7 @@ source-repository head
 
 library
   exposed-modules:
+      FrkPs2.FRK2
       Raehik.MT19937.Internal
       Raehik.MT19937.Pure
   other-modules:
@@ -41,5 +42,8 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.18.0.0 && <4.19
+    , bytestring >=0.12.1.0 && <0.13
+    , bytezap
+    , text >=2.1.1 && <2.2
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021

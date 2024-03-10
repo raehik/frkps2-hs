@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "bytezap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1710083633,
+        "narHash": "sha256-+vzNL/ugw2tFccszKRef+RieY2xZVvXISFNMw/OmEnw=",
+        "owner": "raehik",
+        "repo": "bytezap",
+        "rev": "e376587ea7c83ceaaf3b2593b2db9b912cd8e486",
+        "type": "github"
+      },
+      "original": {
+        "owner": "raehik",
+        "repo": "bytezap",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -69,6 +85,7 @@
     },
     "root": {
       "inputs": {
+        "bytezap": "bytezap",
         "flake-parts": "flake-parts",
         "haskell-flake": "haskell-flake",
         "nixpkgs": "nixpkgs"
