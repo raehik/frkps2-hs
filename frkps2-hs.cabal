@@ -6,14 +6,19 @@ cabal-version: 1.12
 
 name:           frkps2-hs
 version:        0.1.0
+synopsis:       Reversing tools for the PS2 game Fuuraiki (2006)
 description:    Please see README.md.
+category:       Data, Serialization
 homepage:       https://github.com/raehik/frkps2-hs#readme
 bug-reports:    https://github.com/raehik/frkps2-hs/issues
 author:         Ben Orchard
 maintainer:     Ben Orchard <thefirstmuffinman@gmail.com>
+license:        MIT
+license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
+    CHANGELOG.md
 
 source-repository head
   type: git
@@ -43,7 +48,6 @@ library
   build-depends:
       base >=4.18.0.0 && <4.19
     , bytestring >=0.11.5.3 && <0.13.0.0
-    , bytezap
     , primitive
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
@@ -69,7 +73,6 @@ executable frkps2-hs
   build-depends:
       base >=4.18.0.0 && <4.19
     , bytestring >=0.11.5.3 && <0.13.0.0
-    , bytezap
     , frkps2-hs
     , optparse-applicative >=0.17.1.0 && <0.19
     , primitive

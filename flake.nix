@@ -3,8 +3,6 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     haskell-flake.url = "github:srid/haskell-flake";
-    bytezap.url = "github:raehik/bytezap";
-    bytezap.flake = false;
   };
   outputs = inputs:
   let
@@ -31,7 +29,6 @@
           devShell = nondevDevShell "ghc98";
         };
         haskellProjects.ghc96 = {
-          packages.bytezap.source = inputs.bytezap;
           basePackages = pkgs.haskell.packages.ghc96;
           devShell.mkShellArgs.name = "ghc96-frkps2-hs";
           devShell.tools = _: {
