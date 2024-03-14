@@ -73,8 +73,8 @@ extract (MT19937 idx mt) = do
 --
 -- If the skips would result in multiple twists, we perform these in a single
 -- pass (rather than copying the array every twist).
-skip :: MT19937 -> Int -> MT19937
-skip (MT19937 idx mt) n =
+skip :: Int -> MT19937 -> MT19937
+skip n (MT19937 idx mt) =
     let (twists, idx') = (idx+n) `quotRem` 624
     in  if   twists > 0
         then let mt' = VU.modify (replicateM_ twists . twist) mt

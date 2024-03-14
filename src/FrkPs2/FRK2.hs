@@ -27,7 +27,7 @@ import Data.ByteString          qualified as B
 codeW32 :: MT19937 -> Word32 -> (Word32, MT19937)
 codeW32 prng0 w = (w `xor` cipher, prng2)
   where
-    cipher = complement (rnd1 `xor` rnd2)
+    cipher = complement (rnd1 * rnd2)
     (rnd1, prng1) = MT19937.extract prng0
     (rnd2, prng2) = MT19937.extract prng1
 
@@ -39,7 +39,7 @@ code (B.BS fptr len) =
         _prng' <- code' dest len prng
         pure ()
   where
-    prng = MT19937.init 0xFACEFACE
+    prng = MT19937.skip 1 $ MT19937.init 0xFACEFACE
 
 codeFile :: FilePath -> IO B.ByteString
 --codeFile fp = withBinaryFile fp ReadMode $ \handle -> do
