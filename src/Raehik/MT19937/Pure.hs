@@ -36,7 +36,7 @@ init seed = MT19937 { idx = 0, mt = initState }
 
 -- | Initialize an MT19937 with the given seed, without pre-twisting.
 init' :: Word32 -> MT19937
-init' seed = MT19937 { idx = 624, mt = initState }
+init' seed = MT19937 { idx = 623, mt = initState }
   where
     initState = VU.create $ do
         mt' <- VUM.unsafeNew 623
@@ -61,7 +61,7 @@ initHelper mt' = \case
 -- | Extract the next random byte and return the updated state.
 extract :: MT19937 -> (Word32, MT19937)
 extract (MT19937 idx mt) = do
-    if idx == 624 then
+    if idx == 623 then -- could do a >= check here if we're paranoid
         let mt' = VU.modify twist mt
             w   = temper (mt VU.! 0)
         in  (w, MT19937 1       mt')
@@ -75,7 +75,7 @@ extract (MT19937 idx mt) = do
 -- pass (rather than copying the array every twist).
 skip :: MT19937 -> Int -> MT19937
 skip (MT19937 idx mt) n =
-    let (idx', twists) = (idx+n) `quotRem` 624
+    let (twists, idx') = (idx+n) `quotRem` 624
     in  if   twists > 0
         then let mt' = VU.modify (replicateM_ twists . twist) mt
              in  MT19937 idx' mt'
