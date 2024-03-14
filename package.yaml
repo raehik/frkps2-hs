@@ -60,3 +60,15 @@ dependencies:
 
 library:
   source-dirs: src
+
+executables:
+  frkps2-hs:
+    source-dirs: app
+    main: Main.hs
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - frkps2-hs
+    - optparse-applicative >= 0.17.1.0 && < 0.19

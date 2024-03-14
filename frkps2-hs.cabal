@@ -47,3 +47,31 @@ library
     , primitive
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
+
+executable frkps2-hs
+  main-is: Main.hs
+  other-modules:
+      Paths_frkps2_hs
+  hs-source-dirs:
+      app
+  default-extensions:
+      LambdaCase
+      NoStarIsType
+      DerivingVia
+      DeriveAnyClass
+      GADTs
+      RoleAnnotations
+      DefaultSignatures
+      TypeFamilies
+      DataKinds
+      MagicHash
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.18.0.0 && <4.19
+    , bytestring >=0.11.5.3 && <0.13.0.0
+    , bytezap
+    , frkps2-hs
+    , optparse-applicative >=0.17.1.0 && <0.19
+    , primitive
+    , vector >=0.13.1.0 && <0.14
+  default-language: GHC2021

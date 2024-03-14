@@ -21,6 +21,9 @@ import Foreign.Marshal.Utils ( copyBytes )
 import Data.ByteString.Internal qualified as B
 import Data.ByteString          qualified as B
 
+import System.IO ( Handle, hGetBuf, hPutBuf )
+import Foreign.Marshal.Alloc ( allocaBytes )
+
 -- | Encodes or decodes.
 --
 -- @code rng w (fst (code rng w)) === w@
@@ -42,8 +45,23 @@ code (B.BS fptr len) =
     prng = MT19937.skip 1 $ MT19937.init 0xFACEFACE
 
 codeFile :: FilePath -> IO B.ByteString
---codeFile fp = withBinaryFile fp ReadMode $ \handle -> do
 codeFile fp = code <$> B.readFile fp
+
+codeHandle :: Int -> Handle -> Handle -> IO ()
+codeHandle bufLen hr hw = allocaBytes bufLen (go prng0)
+  where
+    go :: MT19937 -> Ptr Word8 -> IO ()
+    go prng buf = do
+        bufLenWritten <- hGetBuf hr buf bufLen
+        if   bufLenWritten < bufLen
+        then do _prng' <- code' buf bufLenWritten prng
+                hPutBuf hw buf bufLenWritten
+                pure ()
+        else do prng' <- code' buf bufLenWritten prng
+                -- safely assume bufLen == bufLenWritten so either is OK
+                hPutBuf hw buf bufLenWritten
+                go prng' buf
+    prng0 = MT19937.skip 1 $ MT19937.init 0xFACEFACE
 
 -- buf is mutable data
 -- taking Ptr because looks like copy prims work on them (see GHC.IO.Handle)
