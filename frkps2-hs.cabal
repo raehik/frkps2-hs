@@ -27,6 +27,7 @@ source-repository head
 library
   exposed-modules:
       FrkPs2.FRK2
+      FrkPs2.FRK2.Internal
   other-modules:
       Paths_frkps2_hs
   hs-source-dirs:
