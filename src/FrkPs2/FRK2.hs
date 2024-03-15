@@ -9,8 +9,8 @@ Conveniently, this means the same operation both encodes and decodes. Indeed:
 
 module FrkPs2.FRK2 where
 
-import Raehik.MT19937.Pure qualified as MT19937
-import Raehik.MT19937.Pure ( MT19937 )
+import MT19937.Pure qualified as MT19937
+import MT19937.Pure ( MT19937 )
 import Data.Bits ( xor, complement )
 import Data.Word
 

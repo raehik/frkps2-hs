@@ -3,6 +3,8 @@
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
     flake-parts.url = "github:hercules-ci/flake-parts";
     haskell-flake.url = "github:srid/haskell-flake";
+    mt19937-hs.url = "github:raehik/mt19937-hs";
+    mt19937-hs.flake = false;
   };
   outputs = inputs:
   let
@@ -30,6 +32,7 @@
         };
         haskellProjects.ghc96 = {
           basePackages = pkgs.haskell.packages.ghc96;
+          packages.mt19937.source = inputs.mt19937-hs;
           devShell.mkShellArgs.name = "ghc96-frkps2-hs";
           devShell.tools = _: {
             haskell-language-server = null; # 2024-03-06: broken
@@ -37,10 +40,12 @@
         };
         haskellProjects.ghc94 = {
           basePackages = pkgs.haskell.packages.ghc94;
+          packages.mt19937.source = inputs.mt19937-hs;
           devShell = nondevDevShell "ghc94";
         };
         haskellProjects.ghc92 = {
           basePackages = pkgs.haskell.packages.ghc92;
+          packages.mt19937.source = inputs.mt19937-hs;
           devShell = nondevDevShell "ghc92";
         };
       };

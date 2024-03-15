@@ -33,6 +33,22 @@
         "type": "github"
       }
     },
+    "mt19937-hs": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1710522125,
+        "narHash": "sha256-yVb3CfLeWKMsSaVT86GvcnM/tbOgvkjIbjMDuquWoe8=",
+        "owner": "raehik",
+        "repo": "mt19937-hs",
+        "rev": "54fa251b79f27099415dde0176a977ecd8065e2d",
+        "type": "github"
+      },
+      "original": {
+        "owner": "raehik",
+        "repo": "mt19937-hs",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1709641832,
@@ -71,6 +87,7 @@
       "inputs": {
         "flake-parts": "flake-parts",
         "haskell-flake": "haskell-flake",
+        "mt19937-hs": "mt19937-hs",
         "nixpkgs": "nixpkgs"
       }
     }
