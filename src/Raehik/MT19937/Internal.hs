@@ -30,11 +30,11 @@ twist mt = go (0 :: Word32)
     m = 397
     a = 0x9908B0DF
     go = \case
-      623 -> pure ()
+      624 -> pure ()
       i   -> do
         mti  <- VUM.unsafeRead mt (fI i)
-        mti1 <- VUM.unsafeRead mt (fI ((i+1) `mod` 623))
-        mtim <- VUM.unsafeRead mt (fI ((i+m) `mod` 623))
+        mti1 <- VUM.unsafeRead mt (fI ((i+1) `mod` 624))
+        mtim <- VUM.unsafeRead mt (fI ((i+m) `mod` 624))
         let x    = (mti .&. 0x80000000) + (mti1 .&. 0x7FFFFFFF)
             mti' = mtim `xor` (x `shiftR` 1)
         if   x .&. 1 == 0
