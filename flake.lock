@@ -1,5 +1,37 @@
 {
   "nodes": {
+    "binrep": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1710642229,
+        "narHash": "sha256-FDHQHcaWfN1m6OBXhygr4P9b0Q3BMC9ks1dpr6InHD0=",
+        "owner": "raehik",
+        "repo": "binrep",
+        "rev": "e0e53f1d1c6ebe76d18cbbe222af5f0bc6fff7cc",
+        "type": "github"
+      },
+      "original": {
+        "owner": "raehik",
+        "repo": "binrep",
+        "type": "github"
+      }
+    },
+    "bytezap": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1710642595,
+        "narHash": "sha256-mC/8nNjVCl8WPwltKo/erHzLHBrwtU/Xox10+XrLpBs=",
+        "owner": "raehik",
+        "repo": "bytezap",
+        "rev": "343208f376bd7f73afcf040c57a683369312aad7",
+        "type": "github"
+      },
+      "original": {
+        "owner": "raehik",
+        "repo": "bytezap",
+        "type": "github"
+      }
+    },
     "flake-parts": {
       "inputs": {
         "nixpkgs-lib": "nixpkgs-lib"
@@ -15,6 +47,22 @@
       "original": {
         "owner": "hercules-ci",
         "repo": "flake-parts",
+        "type": "github"
+      }
+    },
+    "flatparse": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1710539300,
+        "narHash": "sha256-FDRk/mVBJBjSRNJmb/hprVDfVOo7NGzjELqabQ6yEis=",
+        "owner": "AndrasKovacs",
+        "repo": "flatparse",
+        "rev": "d16e501da71a72990b86ed12b902ba0bffa381c6",
+        "type": "github"
+      },
+      "original": {
+        "owner": "AndrasKovacs",
+        "repo": "flatparse",
         "type": "github"
       }
     },
@@ -85,7 +133,10 @@
     },
     "root": {
       "inputs": {
+        "binrep": "binrep",
+        "bytezap": "bytezap",
         "flake-parts": "flake-parts",
+        "flatparse": "flatparse",
         "haskell-flake": "haskell-flake",
         "mt19937-hs": "mt19937-hs",
         "nixpkgs": "nixpkgs"

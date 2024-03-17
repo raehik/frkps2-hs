@@ -20,16 +20,38 @@ import Foreign.Marshal.Alloc ( allocaBytes )
 
 import FrkPs2.FRK2.Internal ( codeBuf, initialPrng )
 
+import Strongweak
+import Strongweak.Generic
+import Binrep.Type.NullPadded
+import GHC.Generics ( Generic )
+import Data.Typeable ( Typeable )
+import Binrep
+
+data FileTableEntry (s :: Strength) a = FileTableEntry
+  { name :: SW s (NullPadded 20 a)
+  } deriving stock Generic
+deriving instance Show a => Show (FileTableEntry 'Weak   a)
+deriving instance Show a => Show (FileTableEntry 'Strong a)
+
+instance Weaken (FileTableEntry 'Strong a) where
+    type Weak   (FileTableEntry 'Strong a) = FileTableEntry 'Weak a
+    weaken = weakenGeneric
+instance (BLen a, Typeable a) => Strengthen (FileTableEntry 'Strong a) where
+    strengthen = strengthenGeneric
+
+instance BLen a => BLen (FileTableEntry 'Strong a) where
+    blen = blenGenericNonSum
+
 -- can we use unsafeWithForeignPtr ? idk probably
-code :: B.ByteString -> B.ByteString
-code (B.BS fptr len) =
+codeBS :: B.ByteString -> B.ByteString
+codeBS (B.BS fptr len) =
     B.unsafeCreate len $ \dest -> unsafeWithForeignPtr fptr $ \src -> do
         copyBytes dest src len
         _prng' <- codeBuf dest len initialPrng
         pure ()
 
 codeFile :: FilePath -> IO B.ByteString
-codeFile fp = code <$> B.readFile fp
+codeFile fp = codeBS <$> B.readFile fp
 
 -- | Code from one handle to another, using the given buffer size.
 --

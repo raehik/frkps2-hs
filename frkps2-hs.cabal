@@ -46,9 +46,11 @@ library
   ghc-options: -Wall
   build-depends:
       base >=4.18.0.0 && <4.19
+    , binrep
     , bytestring >=0.11.5.3 && <0.13.0.0
     , mt19937 >=0.1.0 && <0.2
     , primitive
+    , strongweak
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
 
@@ -72,10 +74,12 @@ executable frkps2-hs
   ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
   build-depends:
       base >=4.18.0.0 && <4.19
+    , binrep
     , bytestring >=0.11.5.3 && <0.13.0.0
     , frkps2-hs
     , mt19937 >=0.1.0 && <0.2
     , optparse-applicative >=0.17.1.0 && <0.19
     , primitive
+    , strongweak
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021

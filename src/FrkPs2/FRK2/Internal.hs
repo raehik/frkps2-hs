@@ -17,7 +17,8 @@ initialPrng = MT19937.skip 1 $ MT19937.init 0xFACEFACE
 {- | Code the data in a mutable buffer given its length and the current MT19937
      PRNG state. Returns the next PRNG state, and has changed the buffer.
 
-Codes in 32-bit words. Ignores any final bytes if buffer isn't a multiple of 4.
+Codes in 32-bit words. Ignores any final bytes if buffer isn't a multiple of 4
+(because I don't know how to handle them).
 
 This can be used to implement efficient coding for any interface (bytestrings,
 handles, probably sockets too).
@@ -36,7 +37,7 @@ codeBuf buf len prng0 = goW32 prng0 0
             let (w32Coded, prng') = codeW32 prng w32
             writeOffPtr bufW32 i w32Coded
             goW32 prng' (i+1)
-    goW8s prng _i = pure prng -- TODO idk how to handle these exactly
+    goW8s prng _i = pure prng
 
 -- | Code the given word.
 --
