@@ -11,6 +11,13 @@
     bytezap.flake = false;
     flatparse.url = "github:AndrasKovacs/flatparse";
     flatparse.flake = false;
+    strongweak.url   = "github:raehik/strongweak";
+    strongweak.flake = false;
+    generic-data-functions.url   = "github:raehik/generic-data-functions";
+    generic-data-functions.flake = false;
+    generic-data-asserts.url   = "github:raehik/generic-data-asserts";
+    generic-data-asserts.flake = false;
+
   };
   outputs = inputs:
   let
@@ -38,6 +45,9 @@
           packages.binrep.source = inputs.binrep;
           packages.bytezap.source = inputs.bytezap;
           packages.flatparse.source = inputs.flatparse;
+          packages.strongweak.source = inputs.strongweak;
+          packages.generic-data-functions.source = inputs.generic-data-functions;
+          packages.generic-data-asserts.source = inputs.generic-data-asserts;
           devShell = nondevDevShell "ghc98";
         };
         haskellProjects.ghc96 = {
@@ -46,6 +56,9 @@
           packages.binrep.source = inputs.binrep;
           packages.bytezap.source = inputs.bytezap;
           packages.flatparse.source = inputs.flatparse;
+          packages.strongweak.source = inputs.strongweak;
+          packages.generic-data-functions.source = inputs.generic-data-functions;
+          packages.generic-data-asserts.source = inputs.generic-data-asserts;
           devShell.mkShellArgs.name = "ghc96-frkps2-hs";
           devShell.tools = _: {
             haskell-language-server = null; # 2024-03-06: broken
@@ -57,6 +70,9 @@
           packages.binrep.source = inputs.binrep;
           packages.bytezap.source = inputs.bytezap;
           packages.flatparse.source = inputs.flatparse;
+          packages.strongweak.source = inputs.strongweak;
+          packages.generic-data-functions.source = inputs.generic-data-functions;
+          packages.generic-data-asserts.source = inputs.generic-data-asserts;
           devShell = nondevDevShell "ghc94";
         };
         haskellProjects.ghc92 = {
@@ -65,6 +81,9 @@
           packages.binrep.source = inputs.binrep;
           packages.bytezap.source = inputs.bytezap;
           packages.flatparse.source = inputs.flatparse;
+          packages.strongweak.source = inputs.strongweak;
+          packages.generic-data-functions.source = inputs.generic-data-functions;
+          packages.generic-data-asserts.source = inputs.generic-data-asserts;
           devShell = nondevDevShell "ghc92";
         };
       };
