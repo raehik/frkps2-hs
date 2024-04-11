@@ -50,6 +50,7 @@ library
     , bytestring >=0.11.5.3 && <0.13.0.0
     , mt19937 >=0.1.0 && <0.2
     , primitive
+    , refined1 ==0.9.*
     , strongweak
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021
@@ -80,6 +81,7 @@ executable frkps2-hs
     , mt19937 >=0.1.0 && <0.2
     , optparse-applicative >=0.17.1.0 && <0.19
     , primitive
+    , refined1 ==0.9.*
     , strongweak
     , vector >=0.13.1.0 && <0.14
   default-language: GHC2021

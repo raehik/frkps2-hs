@@ -24,21 +24,22 @@ import FrkPs2.FRK2.Internal ( codeBuf, initialPrng )
 
 import Strongweak
 import Strongweak.Generic
+import Binrep
 import Binrep.Type.NullPadded
 import Binrep.Type.NullTerminated
 import Binrep.Type.Magic
 import Binrep.Util.ByteOrder
-import Binrep.CBLen
-import Binrep.CBLen.Generic
+import Binrep.Common.Via.Generically.NonSum
 import Data.Word
-import GHC.Generics ( Generic )
+import GHC.Generics ( Generic, Generically(..) )
 import Data.Typeable ( Typeable )
-import Binrep
 import MT19937.Pure ( MT19937 )
 import Foreign.Ptr ( Ptr, plusPtr )
 
 import Data.Bits ( (.^.) )
 import System.Exit ( die )
+
+import Refined ( Refined, And )
 
 -- | Coding status.
 data Encoded = Cipher | Plain
@@ -49,9 +50,17 @@ type family Code (enc :: Encoded) :: Encoded where
     Code 'Plain  = 'Cipher
 
 data FileTable (s :: Strength) a = FileTable
-  { entries :: [SW s (FileTableEntry s a)]
+  { entries :: [FileTableEntry s a]
   } deriving stock Generic
 deriving stock instance Show a => Show (FileTable 'Strong a)
+deriving stock instance Show a => Show (FileTable 'Weak   a)
+
+instance Weaken (FileTable 'Strong a) where
+    type Weak   (FileTable 'Strong a) = FileTable 'Weak a
+    weaken = weakenGeneric
+instance (BLen a, Typeable a, NullCheck a)
+  => Strengthen (FileTable 'Strong a) where
+    strengthen = strengthenGeneric
 
 type W32LE = ByteOrdered 'LittleEndian Word32
 
@@ -70,27 +79,27 @@ data FileTableEntry (s :: Strength) a = FileTableEntry
   , filesize :: SW s W32LE
   , offset   :: SW s W32LE
   -- ^ byte offset in file. should be multiple of 0x800!
-  , name     :: SW s (NullPadded 16 (NullTerminated a))
+  , name     :: SW s (Refined (NullTerminate `And` NullPad 16) a)
   } deriving stock Generic
 deriving instance Show a => Show (FileTableEntry 'Weak   a)
 deriving instance Show a => Show (FileTableEntry 'Strong a)
 
 -- v These instances are so fucking cool.
-instance IsCBLen (FileTableEntry 'Strong a) where
-    type CBLen (FileTableEntry 'Strong a) =
-        CBLenGenericNonSum (FileTableEntry 'Strong a)
-deriving via (ViaCBLen (FileTableEntry 'Strong a)) instance
-    BLen (FileTableEntry 'Strong a)
+deriving via GenericallyNonSum (FileTableEntry 'Strong a)
+    instance IsCBLen (FileTableEntry 'Strong a)
+deriving via ViaCBLen (FileTableEntry 'Strong a)
+    instance BLen    (FileTableEntry 'Strong a)
+deriving via Generically (FileTableEntry 'Strong a)
+    instance (BLen a, Put a) => PutC (FileTableEntry 'Strong a)
+deriving via Generically (FileTableEntry 'Strong a)
+    instance Get a => GetC (FileTableEntry 'Strong a)
 
 instance Weaken (FileTableEntry 'Strong a) where
     type Weak   (FileTableEntry 'Strong a) = FileTableEntry 'Weak a
     weaken = weakenGeneric
-instance (BLen a, Typeable a) => Strengthen (FileTableEntry 'Strong a) where
+instance (BLen a, Typeable a, NullCheck a)
+  => Strengthen (FileTableEntry 'Strong a) where
     strengthen = strengthenGeneric
-
--- Look at this instance. @Get a@ constraint? Fucking incredible.
-instance Get a => GetC (FileTableEntry 'Strong a) where
-    getC = getGenericStruct
 
 -- buf is immutable and @entries@ * @'cblen' \@'FileTableEntryB'@ bytes long
 -- and needs to have been decoded already
@@ -157,6 +166,18 @@ data Frk2Header (s :: Strength) = Frk2Header
   } deriving stock Generic
 deriving stock instance Show (Frk2Header 'Strong)
 
+deriving via GenericallyNonSum (Frk2Header 'Strong)
+    instance IsCBLen (Frk2Header 'Strong)
+deriving via ViaCBLen    (Frk2Header 'Strong) instance BLen (Frk2Header 'Strong)
+deriving via Generically (Frk2Header 'Strong) instance PutC (Frk2Header 'Strong)
+deriving via Generically (Frk2Header 'Strong) instance GetC (Frk2Header 'Strong)
+
+instance Weaken (Frk2Header 'Strong) where
+    type Weak   (Frk2Header 'Strong) = Frk2Header 'Weak
+    weaken = weakenGeneric
+instance Strengthen (Frk2Header 'Strong) where
+    strengthen = strengthenGeneric
+
 -- | see 0x0025bd94 in exec
 codeVtblEntries :: Word32 -> Word32
 codeVtblEntries = (.^.) 0xF76C0531
@@ -183,18 +204,3 @@ hGetBuf' :: Handle -> Ptr a -> Int -> IO ()
 hGetBuf' hdl buf len = do
     len' <- hGetBuf hdl buf len
     if len == len' then pure () else die "small file"
-
-instance IsCBLen (Frk2Header 'Strong) where
-    type CBLen (Frk2Header 'Strong) =
-        CBLenGenericNonSum (Frk2Header 'Strong)
-deriving via (ViaCBLen (Frk2Header 'Strong)) instance
-    BLen (Frk2Header 'Strong)
-
-instance Weaken (Frk2Header 'Strong) where
-    type Weak   (Frk2Header 'Strong) = Frk2Header 'Weak
-    weaken = weakenGeneric
-instance Strengthen (Frk2Header 'Strong) where
-    strengthen = strengthenGeneric
-
-instance GetC (Frk2Header 'Strong) where
-    getC = getGenericStruct
