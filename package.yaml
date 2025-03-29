@@ -52,14 +52,18 @@ ghc-options:
 - -Wall
 
 dependencies:
-- base ^>= 4.18.0.0
+- base
 - mt19937 ^>= 0.1.0
 - primitive
-- binrep
+- binrep ^>= 1.1.0
 - strongweak
-- vector ^>= 0.13.1.0
-- bytestring >= 0.11.5.3 && < 0.13.0.0
-- refined1 ^>= 0.9
+- vector
+- bytestring
+- directory
+- filepath
+
+- effectful
+- effectful-th
 
 library:
   source-dirs: src
@@ -74,4 +78,4 @@ executables:
     - -with-rtsopts=-N
     dependencies:
     - frkps2-hs
-    - optparse-applicative >= 0.17.1.0 && < 0.19
+    - optparse-applicative

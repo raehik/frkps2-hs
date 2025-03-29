@@ -25,8 +25,8 @@ import FrkPs2.FRK2.Internal ( codeBuf, initialPrng )
 import Strongweak
 import Strongweak.Generic
 import Binrep
-import Binrep.Type.NullPadded
-import Binrep.Type.NullTerminated
+import Binrep.Type.Derived.NullTermPadded
+import Binrep.Type.NullTerminated ( type NullCheck )
 import Binrep.Type.Magic
 import Binrep.Util.ByteOrder
 import Binrep.Common.Via.Generically.NonSum
@@ -39,8 +39,6 @@ import Foreign.Ptr ( Ptr, plusPtr )
 import Data.Bits ( (.^.) )
 import System.Exit ( die )
 
-import Refined ( Refined, And )
-
 -- | Coding status.
 data Encoded = Cipher | Plain
 
@@ -48,19 +46,6 @@ data Encoded = Cipher | Plain
 type family Code (enc :: Encoded) :: Encoded where
     Code 'Cipher = 'Plain
     Code 'Plain  = 'Cipher
-
-data FileTable (s :: Strength) a = FileTable
-  { entries :: [FileTableEntry s a]
-  } deriving stock Generic
-deriving stock instance Show a => Show (FileTable 'Strong a)
-deriving stock instance Show a => Show (FileTable 'Weak   a)
-
-instance Weaken (FileTable 'Strong a) where
-    type Weak   (FileTable 'Strong a) = FileTable 'Weak a
-    weaken = weakenGeneric
-instance (BLen a, Typeable a, NullCheck a)
-  => Strengthen (FileTable 'Strong a) where
-    strengthen = strengthenGeneric
 
 type W32LE = ByteOrdered 'LittleEndian Word32
 
@@ -79,7 +64,7 @@ data FileTableEntry (s :: Strength) a = FileTableEntry
   , filesize :: SW s W32LE
   , offset   :: SW s W32LE
   -- ^ byte offset in file. should be multiple of 0x800!
-  , name     :: SW s (Refined (NullTerminate `And` NullPad 16) a)
+  , name     :: SW s (NullTermPadded 16 a)
   } deriving stock Generic
 deriving instance Show a => Show (FileTableEntry 'Weak   a)
 deriving instance Show a => Show (FileTableEntry 'Strong a)
@@ -105,12 +90,13 @@ instance (BLen a, Typeable a, NullCheck a)
 -- and needs to have been decoded already
 -- this type looks REALLY weird. but it's maybe safe? because it comes with a
 -- bunch of expectations??
-getFileTable :: Ptr Word8 -> Int -> Either E (FileTable 'Strong B.ByteString)
+-- kinda want to add IO back in but the get runs without it :| weird situation
+getFileTable :: Ptr Word8 -> Int -> Either E [FileTableEntryB]
 getFileTable src entryCount = go [] src
   where
     entryLen = cblen @FileTableEntryB
     go entries buf
-      | buf == bufEnd = Right $ FileTable entries
+      | buf == bufEnd = Right entries
       | otherwise = do
             case unsafeRunGetCPtr buf of
               Left  e     -> Left e
@@ -182,11 +168,18 @@ instance Strengthen (Frk2Header 'Strong) where
 codeVtblEntries :: Word32 -> Word32
 codeVtblEntries = (.^.) 0xF76C0531
 
--- fresh handle plz (pointing to FRK2)
+-- | use with 'withBinaryFile'
+--
+-- parses filetable all-in-one
+--
+-- TODO add sanity checks (primarily, assert that filetable fits in file before
+-- allocating that buffer)
 getFrk2EntriesHandle
     :: Handle
-    -> IO (Either E (FileTable 'Strong B.ByteString))
+    -> IO (Either E [FileTableEntryB])
 getFrk2EntriesHandle hdl = allocaBytes 0x20 $ \buf -> do
+    -- TODO lol I could even reuse the 256KiB buf here if I want... probably bad
+    -- though ^^;
     hGetBuf' hdl buf 0x20
     case unsafeRunGetCPtr @(Frk2Header 'Strong) buf of
       Left  e          -> pure $ Left e
@@ -194,6 +187,8 @@ getFrk2EntriesHandle hdl = allocaBytes 0x20 $ \buf -> do
         let ftblEntries' =
                 fromIntegral $ codeVtblEntries $ unByteOrdered $ ftblEntries frk2Header
             ftblLen      = cblen @FileTableEntryB * ftblEntries'
+        -- | TODO starting from here, we should just reuse our 256KiB IO buf
+        --   instead of re-allocating
         allocaBytes ftblLen $ \buf' -> do
             hGetBuf' hdl buf' ftblLen
             _prng' <- codeBuf buf' ftblLen initialPrng
@@ -204,3 +199,10 @@ hGetBuf' :: Handle -> Ptr a -> Int -> IO ()
 hGetBuf' hdl buf len = do
     len' <- hGetBuf hdl buf len
     if len == len' then pure () else die "small file"
+
+asdf
+    :: (Packer :> es)
+    => Handle -> FilePath -> [FileTableEntryB] -> Eff es a
+asdf hdl fpRoot es = do
+    createDirectoryIfMissing True fpRoot
+    traverse_ (\e -> packFile filesize e packFile packFile
