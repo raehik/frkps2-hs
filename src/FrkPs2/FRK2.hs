@@ -25,8 +25,12 @@ import FrkPs2.FRK2.Internal ( codeBuf, initialPrng )
 import Strongweak
 import Strongweak.Generic
 import Binrep
+import Binrep.Instances.Strongweak.Type.Magic
+import Binrep.Instances.Strongweak.Util.ByteOrder
+import Data.Text.Builder.Linear qualified as TBL
 import Binrep.Type.Derived.NullTermPadded
-import Binrep.Type.NullTerminated ( type NullCheck )
+import Binrep.Type.NullTerminated ( type NullTerminate )
+import Rerefined ( type Refine )
 import Binrep.Type.Magic
 import Binrep.Util.ByteOrder
 import Binrep.Common.Via.Generically.NonSum
@@ -79,10 +83,10 @@ deriving via Generically (FileTableEntry 'Strong a)
 deriving via Generically (FileTableEntry 'Strong a)
     instance Get a => GetC (FileTableEntry 'Strong a)
 
-instance Weaken (FileTableEntry 'Strong a) where
-    type Weak   (FileTableEntry 'Strong a) = FileTableEntry 'Weak a
+instance Weaken   (FileTableEntry 'Strong a) where
+    type Weakened (FileTableEntry 'Strong a) = FileTableEntry 'Weak a
     weaken = weakenGeneric
-instance (BLen a, Typeable a, NullCheck a)
+instance (BLen a, Typeable a, Refine NullTerminate a)
   => Strengthen (FileTableEntry 'Strong a) where
     strengthen = strengthenGeneric
 
@@ -91,7 +95,8 @@ instance (BLen a, Typeable a, NullCheck a)
 -- this type looks REALLY weird. but it's maybe safe? because it comes with a
 -- bunch of expectations??
 -- kinda want to add IO back in but the get runs without it :| weird situation
-getFileTable :: Ptr Word8 -> Int -> Either E [FileTableEntryB]
+getFileTable
+    :: Ptr Word8 -> Int -> Either (ParseError Int TBL.Builder) [FileTableEntryB]
 getFileTable src entryCount = go [] src
   where
     entryLen = cblen @FileTableEntryB
@@ -99,8 +104,8 @@ getFileTable src entryCount = go [] src
       | buf == bufEnd = Right entries
       | otherwise = do
             case unsafeRunGetCPtr buf of
-              Left  e     -> Left e
               Right entry -> go (entry : entries) (buf `plusPtr` entryLen)
+              Left  e     -> Left e
     bufEnd = src `plusPtr` (entryCount * entryLen)
 
 -- can we use unsafeWithForeignPtr ? idk probably
@@ -158,8 +163,8 @@ deriving via ViaCBLen    (Frk2Header 'Strong) instance BLen (Frk2Header 'Strong)
 deriving via Generically (Frk2Header 'Strong) instance PutC (Frk2Header 'Strong)
 deriving via Generically (Frk2Header 'Strong) instance GetC (Frk2Header 'Strong)
 
-instance Weaken (Frk2Header 'Strong) where
-    type Weak   (Frk2Header 'Strong) = Frk2Header 'Weak
+instance Weaken   (Frk2Header 'Strong) where
+    type Weakened (Frk2Header 'Strong) = Frk2Header 'Weak
     weaken = weakenGeneric
 instance Strengthen (Frk2Header 'Strong) where
     strengthen = strengthenGeneric
@@ -176,7 +181,7 @@ codeVtblEntries = (.^.) 0xF76C0531
 -- allocating that buffer)
 getFrk2EntriesHandle
     :: Handle
-    -> IO (Either E [FileTableEntryB])
+    -> IO (Either (ParseError Int TBL.Builder) [FileTableEntryB])
 getFrk2EntriesHandle hdl = allocaBytes 0x20 $ \buf -> do
     -- TODO lol I could even reuse the 256KiB buf here if I want... probably bad
     -- though ^^;
@@ -200,9 +205,11 @@ hGetBuf' hdl buf len = do
     len' <- hGetBuf hdl buf len
     if len == len' then pure () else die "small file"
 
+{-
 asdf
     :: (Packer :> es)
     => Handle -> FilePath -> [FileTableEntryB] -> Eff es a
 asdf hdl fpRoot es = do
     createDirectoryIfMissing True fpRoot
     traverse_ (\e -> packFile filesize e packFile packFile
+-}

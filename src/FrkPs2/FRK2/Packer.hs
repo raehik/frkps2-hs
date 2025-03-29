@@ -1,10 +1,4 @@
-{-# LANGUAGE TemplateHaskell #-}
-
 module FrkPs2.FRK2.Packer where
-
-import Effectful
-import Effectful.Dispatch.Dynamic
-import Effectful.TH ( makeEffect )
 
 import Foreign.Ptr ( Ptr )
 import Data.Word ( Word8 )
@@ -16,6 +10,8 @@ import System.IO
 -- Then write one that writes files to a configured folder.
 -- Could also write one that writes directly to another archive format!
 -- gonna need a type class for converting a btw
+
+{-
 
 -- | fp is filepath. 'FilePath' (filesystem) or 'ByteString' (virtual etc.).
 data Packer fp :: Effect where
@@ -34,6 +30,8 @@ runPackerFolder fpRoot hdlSrc = interpret $ \_ -> \case
     withBinaryFile fpAbs WriteMode $ \hdlDest ->
         hSeek hdl AbsoluteSeek os
         hPutBuf hdl _ len
+
+-}
 
 -- | Copy bytes from one handle to another.
 --

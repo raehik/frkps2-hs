@@ -48,14 +48,15 @@ library
   build-depends:
       base
     , binrep >=1.1.0 && <1.2
+    , binrep-instances >=0.2.0 && <0.3
     , bytestring
     , directory
-    , effectful
-    , effectful-th
     , filepath
     , mt19937 >=0.1.0 && <0.2
     , primitive
-    , strongweak
+    , rerefined
+    , strongweak >=0.12.0 && <0.13
+    , text-builder-linear
     , vector
   default-language: GHC2021
 
@@ -80,15 +81,16 @@ executable frkps2-hs
   build-depends:
       base
     , binrep >=1.1.0 && <1.2
+    , binrep-instances >=0.2.0 && <0.3
     , bytestring
     , directory
-    , effectful
-    , effectful-th
     , filepath
     , frkps2-hs
     , mt19937 >=0.1.0 && <0.2
     , optparse-applicative
     , primitive
-    , strongweak
+    , rerefined
+    , strongweak >=0.12.0 && <0.13
+    , text-builder-linear
     , vector
   default-language: GHC2021

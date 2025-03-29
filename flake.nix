@@ -5,6 +5,10 @@
     haskell-flake.url = "github:srid/haskell-flake";
     binrep.url   = "github:raehik/binrep";
     binrep.flake = false;
+    binrep-instances.url   = "github:raehik/binrep-instances";
+    binrep-instances.flake = false;
+    strongweak.url   = "github:raehik/strongweak";
+    strongweak.flake = false;
   };
   outputs = inputs:
   let
@@ -27,16 +31,23 @@
         haskellProjects.ghc910 = {
           basePackages = pkgs.haskell.packages.ghc910;
           devShell = defDevShell "ghc910";
+          packages.binrep.source = inputs.binrep;
+          packages.binrep-instances.source = inputs.binrep-instances;
+          packages.strongweak.source = inputs.strongweak;
         };
         haskellProjects.ghc98 = {
           basePackages = pkgs.haskell.packages.ghc98;
           devShell = defDevShell "ghc98";
-          settings.strongweak.broken = false;
           packages.binrep.source = inputs.binrep;
+          packages.binrep-instances.source = inputs.binrep-instances;
+          packages.strongweak.source = inputs.strongweak;
         };
         haskellProjects.ghc96 = {
           basePackages = pkgs.haskell.packages.ghc96;
           devShell = defDevShell "ghc96";
+          packages.binrep.source = inputs.binrep;
+          packages.binrep-instances.source = inputs.binrep-instances;
+          packages.strongweak.source = inputs.strongweak;
         };
       };
     };

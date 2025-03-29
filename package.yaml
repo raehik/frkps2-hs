@@ -56,14 +56,14 @@ dependencies:
 - mt19937 ^>= 0.1.0
 - primitive
 - binrep ^>= 1.1.0
-- strongweak
+- strongweak ^>= 0.12.0
+- binrep-instances ^>= 0.2.0
+- text-builder-linear
+- rerefined
 - vector
 - bytestring
 - directory
 - filepath
-
-- effectful
-- effectful-th
 
 library:
   source-dirs: src
